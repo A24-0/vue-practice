@@ -1,6 +1,6 @@
 <template>
   <div class="palette-generator">
-    <h2>🎨 Генератор цветовых палитр</h2>
+    <h2>Генератор цветовых палитр</h2>
     
     <div class="controls-section">
       <div class="control-group">
@@ -47,7 +47,7 @@
       </div>
       
       <button @click="generatePalette" class="generate-button">
-        🎲 Сгенерировать палитру
+        Сгенерировать палитру
       </button>
     </div>
 
@@ -151,7 +151,7 @@
 
     <!-- Цветовой круг -->
     <div class="color-wheel-section" v-if="currentPalette.length > 0">
-      <h3>🎨 Цветовой круг</h3>
+      <h3>Цветовой круг</h3>
       <div class="color-wheel-container">
         <canvas ref="colorWheelCanvas" class="color-wheel-canvas" width="300" height="300"></canvas>
         <div class="color-wheel-legend">
@@ -165,7 +165,7 @@
 
     <!-- Акцентные цвета -->
     <div class="accent-colors-section" v-if="currentPalette.length > 0">
-      <h3>✨ Подбор акцентных цветов</h3>
+      <h3>Подбор акцентных цветов</h3>
       <button @click="generateAccentColors" class="generate-accent-btn">Сгенерировать акценты</button>
       <div class="accent-colors-grid">
         <div 
@@ -187,7 +187,7 @@
 
     <!-- Анализ доступности -->
     <div class="accessibility-section" v-if="currentPalette.length > 0">
-      <h3>🔍 Анализ доступности (WCAG)</h3>
+      <h3>Анализ доступности (WCAG)</h3>
       <div class="contrast-grid">
         <div v-for="(color, index) in currentPalette" :key="index" class="contrast-item">
           <div class="contrast-pair" :style="{ backgroundColor: color.hex, color: getContrastColor(color.hex) }">
@@ -203,7 +203,7 @@
 
     <!-- Управление библиотекой -->
     <div class="library-section">
-      <h3>📚 Библиотека палитр</h3>
+      <h3>Библиотека палитр</h3>
       <div class="library-controls">
         <input 
           v-model="paletteName" 
@@ -215,7 +215,7 @@
           placeholder="Теги (через запятую)" 
           class="text-input"
         />
-        <button @click="savePaletteToLibrary" class="save-library-btn">💾 Сохранить палитру</button>
+        <button @click="savePaletteToLibrary" class="save-library-btn">Сохранить палитру</button>
       </div>
       
       <div class="search-library">
@@ -252,9 +252,9 @@
             </div>
           </div>
           <div class="palette-actions">
-            <button @click="loadPalette(palette)" class="action-btn">📂 Загрузить</button>
-            <button @click="editPalette(palette)" class="action-btn">✏️ Редактировать</button>
-            <button @click="sharePalette(palette)" class="action-btn">🔗 Поделиться</button>
+            <button @click="loadPalette(palette)" class="action-btn"> Загрузить</button>
+            <button @click="editPalette(palette)" class="action-btn"> Редактировать</button>
+            <button @click="sharePalette(palette)" class="action-btn"> Поделиться</button>
             <button @click="toggleFavorite(palette.id)" class="action-btn">
               {{ palette.favorite ? '⭐' : '☆' }}
             </button>
@@ -301,9 +301,9 @@
 
     <!-- Экспорт -->
     <div class="export-section">
-      <h3>📤 Экспорт палитры</h3>
+      <h3> Экспорт палитры</h3>
       <div v-if="currentPalette.length === 0" class="export-empty">
-        <p>⚠️ Сначала сгенерируйте палитру для экспорта</p>
+        <p> Сначала сгенерируйте палитру для экспорта</p>
       </div>
       <div v-else>
         <div class="export-options">
@@ -315,8 +315,8 @@
         <div class="export-output">
           <pre>{{ exportCode }}</pre>
           <div class="export-actions">
-            <button @click="copyExportCode" class="copy-export-btn">📋 Копировать код</button>
-            <button @click="downloadExportFile" class="download-export-btn">💾 Скачать файл</button>
+            <button @click="copyExportCode" class="copy-export-btn"> Копировать код</button>
+            <button @click="downloadExportFile" class="download-export-btn"> Скачать файл</button>
           </div>
         </div>
       </div>

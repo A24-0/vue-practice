@@ -1,8 +1,7 @@
 <template>
   <div id="app">
     <header class="app-header">
-      <h1>🎯 Vue 3 Практика - Основы</h1>
-      <p>Изучаем реактивность, директивы и компоненты</p>
+      <h1>Vue Практика</h1>
     </header>
 
     <nav class="navigation">
@@ -32,7 +31,7 @@
         :class="{ active: currentDemo === 'palette' }"
         class="nav-button"
       >
-        🎨 Генератор палитр
+        Генератор палитр
       </button>
       <button 
         @click="currentDemo = 'usercards'" 
