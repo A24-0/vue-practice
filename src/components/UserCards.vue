@@ -38,17 +38,27 @@
       <p>Активных: {{ activeUsers }}</p>
       <p v-if="lastClickedUser">Последний клик: {{ lastClickedUser.name }}</p>
     </div>
+
+    <!-- Модальное окно редактирования -->
+    <UserEditModal
+      :is-open="isEditModalOpen"
+      :user="selectedUser"
+      @close="closeEditModal"
+      @save="saveUser"
+    />
   </div>
 </template>
 
 <script>
 import UserCard from './UserCard.vue'
+import UserEditModal from './UserEditModal.vue'
 
 export default {
   name: 'UserCards',
   
   components: {
-    UserCard
+    UserCard,
+    UserEditModal
   },
   
   data() {
@@ -82,7 +92,9 @@ export default {
           active: true
         }
       ],
-      lastClickedUser: null
+      lastClickedUser: null,
+      isEditModalOpen: false,
+      selectedUser: null
     }
   },
   
@@ -103,8 +115,28 @@ export default {
     },
     
     editUser(user) {
-      console.log('Редактирование:', user)
-      alert(`Редактирование пользователя: ${user.name}`)
+      this.selectedUser = user
+      this.isEditModalOpen = true
+    },
+    
+    closeEditModal() {
+      this.isEditModalOpen = false
+      this.selectedUser = null
+    },
+    
+    saveUser(updatedUser) {
+      // Обновляем администратора
+      if (updatedUser.id === this.adminUser.id) {
+        Object.assign(this.adminUser, updatedUser)
+        console.log('Администратор обновлен:', updatedUser)
+      } else {
+        // Обновляем обычного пользователя
+        const index = this.users.findIndex(u => u.id === updatedUser.id)
+        if (index !== -1) {
+          Object.assign(this.users[index], updatedUser)
+          console.log('Пользователь обновлен:', updatedUser)
+        }
+      }
     },
     
     deleteUser(userId) {

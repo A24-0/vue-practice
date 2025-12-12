@@ -302,15 +302,23 @@
     <!-- Экспорт -->
     <div class="export-section">
       <h3>📤 Экспорт палитры</h3>
-      <div class="export-options">
-        <button @click="exportFormat = 'css'" :class="{ active: exportFormat === 'css' }" class="export-btn">CSS Variables</button>
-        <button @click="exportFormat = 'scss'" :class="{ active: exportFormat === 'scss' }" class="export-btn">SCSS Variables</button>
-        <button @click="exportFormat = 'tailwind'" :class="{ active: exportFormat === 'tailwind' }" class="export-btn">Tailwind Config</button>
-        <button @click="exportFormat = 'css-code'" :class="{ active: exportFormat === 'css-code' }" class="export-btn">Готовый CSS</button>
+      <div v-if="currentPalette.length === 0" class="export-empty">
+        <p>⚠️ Сначала сгенерируйте палитру для экспорта</p>
       </div>
-      <div class="export-output">
-        <pre>{{ exportCode }}</pre>
-        <button @click="copyExportCode" class="copy-export-btn">📋 Копировать код</button>
+      <div v-else>
+        <div class="export-options">
+          <button @click="exportFormat = 'css'" :class="{ active: exportFormat === 'css' }" class="export-btn">CSS Variables</button>
+          <button @click="exportFormat = 'scss'" :class="{ active: exportFormat === 'scss' }" class="export-btn">SCSS Variables</button>
+          <button @click="exportFormat = 'tailwind'" :class="{ active: exportFormat === 'tailwind' }" class="export-btn">Tailwind Config</button>
+          <button @click="exportFormat = 'css-code'" :class="{ active: exportFormat === 'css-code' }" class="export-btn">Готовый CSS</button>
+        </div>
+        <div class="export-output">
+          <pre>{{ exportCode }}</pre>
+          <div class="export-actions">
+            <button @click="copyExportCode" class="copy-export-btn">📋 Копировать код</button>
+            <button @click="downloadExportFile" class="download-export-btn">💾 Скачать файл</button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -736,12 +744,68 @@ export default {
     })
 
     const copyExportCode = async () => {
+      if (currentPalette.value.length === 0) {
+        alert('Палитра пустая. Сначала сгенерируйте палитру!')
+        return
+      }
+      
+      if (!exportCode.value) {
+        alert('Нет данных для экспорта')
+        return
+      }
+      
       try {
         await navigator.clipboard.writeText(exportCode.value)
-        alert('Код скопирован!')
+        alert('✅ Код скопирован в буфер обмена!')
       } catch (err) {
         console.error('Ошибка копирования:', err)
+        // Fallback для старых браузеров
+        const textArea = document.createElement('textarea')
+        textArea.value = exportCode.value
+        textArea.style.position = 'fixed'
+        textArea.style.opacity = '0'
+        document.body.appendChild(textArea)
+        textArea.select()
+        try {
+          document.execCommand('copy')
+          alert('✅ Код скопирован в буфер обмена!')
+        } catch (fallbackErr) {
+          alert('❌ Не удалось скопировать код. Попробуйте выделить и скопировать вручную.')
+        }
+        document.body.removeChild(textArea)
       }
+    }
+
+    const downloadExportFile = () => {
+      if (currentPalette.value.length === 0) {
+        alert('Палитра пустая. Сначала сгенерируйте палитру!')
+        return
+      }
+      
+      if (!exportCode.value) {
+        alert('Нет данных для экспорта')
+        return
+      }
+      
+      const fileExtensions = {
+        'css': 'css',
+        'scss': 'scss',
+        'tailwind': 'js',
+        'css-code': 'css'
+      }
+      
+      const extension = fileExtensions[exportFormat.value] || 'txt'
+      const fileName = `palette-export.${extension}`
+      
+      const blob = new Blob([exportCode.value], { type: 'text/plain' })
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = fileName
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
     }
 
     // Генерация акцентных цветов
@@ -949,6 +1013,7 @@ export default {
       deletePalette,
       filteredPalettes,
       copyExportCode,
+      downloadExportFile,
       accentColors,
       generateAccentColors,
       addAccentToPalette,
@@ -1455,6 +1520,20 @@ export default {
   background-color: #667eea;
 }
 
+.export-empty {
+  padding: 20px;
+  text-align: center;
+  background-color: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 4px;
+  color: #856404;
+}
+
+.export-empty p {
+  margin: 0;
+  font-weight: bold;
+}
+
 .export-output {
   position: relative;
 }
@@ -1469,9 +1548,17 @@ export default {
   font-size: 14px;
   line-height: 1.5;
   margin-bottom: 10px;
+  min-height: 100px;
 }
 
-.copy-export-btn {
+.export-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.copy-export-btn,
+.download-export-btn {
   padding: 8px 16px;
   background-color: #28a745;
   color: white;
@@ -1479,10 +1566,20 @@ export default {
   border-radius: 4px;
   cursor: pointer;
   font-weight: bold;
+  transition: background-color 0.2s;
 }
 
-.copy-export-btn:hover {
+.copy-export-btn:hover,
+.download-export-btn:hover {
   background-color: #218838;
+}
+
+.download-export-btn {
+  background-color: #667eea;
+}
+
+.download-export-btn:hover {
+  background-color: #5568d3;
 }
 
 .color-wheel-section {
